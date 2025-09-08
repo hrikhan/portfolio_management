@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'models/user_profile.dart';
 import 'project_details_page.dart';
+import 'widgets/animated_avatar.dart';
 
 class UserProfileViewPage extends StatelessWidget {
   final UserProfile userProfile;
@@ -85,30 +86,12 @@ class UserProfileViewPage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Profile Image
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [Colors.blue[400]!, Colors.blue[600]!],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.blue.withOpacity(0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.person,
-              size: 60,
-              color: Colors.white,
-            ),
+          // Animated Profile Avatar
+          AnimatedAvatar(
+            size: 120,
+            gradientColors: _getProfileGradientColors(userProfile.id),
+            delay: const Duration(milliseconds: 200),
+            assetImagePath: 'assets/${userProfile.profileImage}',
           ),
           const SizedBox(height: 20),
           
@@ -494,5 +477,18 @@ class UserProfileViewPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<Color> _getProfileGradientColors(String profileId) {
+    switch (profileId) {
+      case 'hridoy_khan':
+        return [Colors.blue[400]!, Colors.blue[600]!];
+      case 'sarah_johnson':
+        return [Colors.purple[400]!, Colors.purple[600]!];
+      case 'alex_chen':
+        return [Colors.teal[400]!, Colors.teal[600]!];
+      default:
+        return [Colors.grey[400]!, Colors.grey[600]!];
+    }
   }
 }

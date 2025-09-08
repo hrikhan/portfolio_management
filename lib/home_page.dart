@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'controllers/home_controller.dart';
 import 'models/user_profile.dart';
 import 'project_details_page.dart';
+import 'widgets/animated_avatar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -21,23 +22,42 @@ class HomePage extends StatelessWidget {
             children: [
               // Header section
               const SizedBox(height: 20),
-              const Text(
-                'Welcome Back!',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Welcome Back!',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Obx(() => Text(
+                          '${homeController.profileController.currentProfile.name} - ${homeController.profileController.currentProfile.title}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Animated Profile Avatar
+                  Obx(() => AnimatedAvatar(
+                    size: 80,
+                    gradientColors: _getProfileGradientColors(homeController.profileController.currentProfile.id),
+                    delay: const Duration(milliseconds: 300),
+                    assetImagePath: 'assets/${homeController.profileController.currentProfile.profileImage}',
+                  )),
+                ],
               ),
-              const SizedBox(height: 8),
-              Obx(() => Text(
-                '${homeController.profileController.currentProfile.name} - ${homeController.profileController.currentProfile.title}',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-              )),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               
               // Search Bar
               Container(
@@ -270,6 +290,19 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<Color> _getProfileGradientColors(String profileId) {
+    switch (profileId) {
+      case 'hridoy_khan':
+        return [Colors.blue[400]!, Colors.blue[600]!];
+      case 'sarah_johnson':
+        return [Colors.purple[400]!, Colors.purple[600]!];
+      case 'alex_chen':
+        return [Colors.teal[400]!, Colors.teal[600]!];
+      default:
+        return [Colors.grey[400]!, Colors.grey[600]!];
+    }
   }
 
 }
