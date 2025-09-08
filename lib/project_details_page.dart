@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'models/user_profile.dart';
+import 'widgets/animated_avatar.dart';
 
 class ProjectDetailsPage extends StatelessWidget {
   final Project project;
@@ -523,22 +524,10 @@ class ProjectDetailsPage extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [project.color.withOpacity(0.7), project.color],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: const Icon(
-                  Icons.person,
-                  color: Colors.white,
-                  size: 24,
-                ),
+              AnimatedAvatar(
+                size: 50,
+                gradientColors: [project.color.withOpacity(0.7), project.color],
+                delay: const Duration(milliseconds: 400),
               ),
               const SizedBox(width: 16),
               Expanded(

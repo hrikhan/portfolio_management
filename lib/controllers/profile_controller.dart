@@ -25,7 +25,7 @@ class ProfileController extends GetxController {
         bio: 'Passionate Flutter developer with expertise in mobile app development and backend technologies.',
         email: 'hridoy.khan@example.com',
         location: 'Dhaka, Bangladesh',
-        profileImage: 'assets/hridoy_profile.jpg',
+        profileImage: '66fcde00cf54d71747a52bac_upwork-profile-photo-tips.jpg',
         projects: [
           Project(
             title: 'E-Commerce Flutter App',

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'controllers/profile_controller.dart';
 import 'models/user_profile.dart';
 import 'user_profile_view_page.dart';
+import 'widgets/animated_avatar.dart';
 
 class FindUserPage extends StatelessWidget {
   const FindUserPage({super.key});
@@ -32,13 +33,10 @@ class FindUserPage extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Switch between different user profiles',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               ),
               const SizedBox(height: 30),
-              
+
               // Current Profile Section
               Container(
                 width: double.infinity,
@@ -48,46 +46,45 @@ class FindUserPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.blue[200]!),
                 ),
-                child: Obx(() => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.person, color: Colors.blue[600], size: 24),
-                        const SizedBox(width: 12),
-                        const Text(
-                          'Current Profile',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                child: Obx(
+                  () => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.person, color: Colors.blue[600], size: 24),
+                          const SizedBox(width: 12),
+                          const Text(
+                            'Current Profile',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        profileController.currentProfile.name,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      profileController.currentProfile.name,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      profileController.currentProfile.title,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                      const SizedBox(height: 4),
+                      Text(
+                        profileController.currentProfile.title,
+                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
-                    ),
-                  ],
-                )),
+                    ],
+                  ),
+                ),
               ),
-              
+
               const SizedBox(height: 30),
-              
+
               // Available Profiles Section
               const Text(
                 'Available Profiles',
@@ -98,16 +95,22 @@ class FindUserPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Profiles List
               Expanded(
                 child: ListView.builder(
                   itemCount: profileController.availableProfiles.length,
                   itemBuilder: (context, index) {
                     final profile = profileController.availableProfiles[index];
-                    final isCurrentProfile = profile.id == profileController.currentProfileId.value;
-                    
-                    return _buildProfileCard(profile, isCurrentProfile, profileController);
+                    final isCurrentProfile =
+                        profile.id == profileController.currentProfileId.value;
+
+                    return _buildProfileCard(
+                      profile,
+                      isCurrentProfile,
+                      profileController,
+                      index,
+                    );
                   },
                 ),
               ),
@@ -118,147 +121,149 @@ class FindUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileCard(UserProfile profile, bool isCurrentProfile, ProfileController profileController) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: isCurrentProfile ? Border.all(color: Colors.blue[300]!, width: 2) : null,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
+  Widget _buildProfileCard(
+    UserProfile profile,
+    bool isCurrentProfile,
+    ProfileController profileController,
+    int index,
+  ) {
+    return AnimatedProfileCard(
+      delay: Duration(milliseconds: 150 * index),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            // Navigate to detailed profile view page
-            Get.to(() => UserProfileViewPage(userProfile: profile));
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    // Profile Avatar
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: _getProfileColors(profile.id),
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+          border: isCurrentProfile
+              ? Border.all(color: Colors.blue[300]!, width: 2)
+              : null,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              // Navigate to detailed profile view page
+              Get.to(() => UserProfileViewPage(userProfile: profile));
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      // Animated Profile Avatar
+                      AnimatedAvatar(
+                        size: 60,
+                        gradientColors: _getProfileColors(profile.id),
+                        delay: Duration(milliseconds: 100 * index),
+                        assetImagePath: 'assets/${profile.profileImage}',
                       ),
-                      child: Icon(
-                        Icons.person,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    
-                    // Profile Info
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                profile.name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              if (isCurrentProfile) ...[
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue[100],
-                                    borderRadius: BorderRadius.circular(12),
+                      const SizedBox(width: 16),
+
+                      // Profile Info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  profile.name,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
                                   ),
-                                  child: Text(
-                                    'Current',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.blue[700],
+                                ),
+                                if (isCurrentProfile) ...[
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue[100],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      'Current',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.blue[700],
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ],
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            profile.title,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            profile.location,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[500],
+                            const SizedBox(height: 4),
+                            Text(
+                              profile.title,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 4),
+                            Text(
+                              profile.location,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    
-                    // Arrow Icon
-                    if (!isCurrentProfile)
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                        color: Colors.grey[400],
-                      ),
-                  ],
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // Profile Stats
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildStatItem('Projects', profile.stats.projects),
-                    _buildStatItem('Experience', profile.stats.experience),
-                    _buildStatItem('Rating', profile.stats.rating),
-                  ],
-                ),
-                
-                const SizedBox(height: 12),
-                
-                // Bio
-                Text(
-                  profile.bio,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey[600],
-                    height: 1.3,
+
+                      // Arrow Icon
+                      if (!isCurrentProfile)
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Colors.grey[400],
+                        ),
+                    ],
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+
+                  const SizedBox(height: 16),
+
+                  // Profile Stats
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildStatItem('Projects', profile.stats.projects),
+                      _buildStatItem('Experience', profile.stats.experience),
+                      _buildStatItem('Rating', profile.stats.rating),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Bio
+                  Text(
+                    profile.bio,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[600],
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -278,13 +283,7 @@ class FindUserPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
       ],
     );
   }
